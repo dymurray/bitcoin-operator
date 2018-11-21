@@ -1,0 +1,7 @@
+apiVersion: bitcoin.example.com/v1
+kind: Bitd
+metadata:
+  name: example-bitd
+spec:
+  # Add fields here
+  size: 3

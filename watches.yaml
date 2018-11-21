@@ -1,0 +1,5 @@
+---
+- version: v1
+  group: bitcoin.example.com
+  kind: Bitd
+  role: /opt/ansible/roles/Bitd

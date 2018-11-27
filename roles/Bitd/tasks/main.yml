@@ -1,2 +1,31 @@
 ---
 # tasks file for Bitd
+- name: start bitd
+  k8s:
+    definition:
+      kind: Deployment
+      apiVersion: apps/v1
+      metadata:
+        name: '{{ meta.name }}-bitd'
+        namespace: '{{ meta.namespace }}'
+      spec:
+        selector:
+          matchLabels:
+            app: bitd
+        template:
+          metadata:
+            labels:
+              app: bitd
+          spec:
+            containers:
+            - name: bitd
+              image: "docker.io/dymurray/bitcoin-sv-bitd"
+              ports:
+                - containerPort: 8332
+- k8s_status:
+    api_version: bitcoin.example.com/v1
+    kind: Bitd
+    name: "{{ meta.name }}"
+    namespace: "{{ meta.namespace }}"
+    status:
+      hello: world

@@ -3,3 +3,4 @@
   group: bitcoin.example.com
   kind: Bitd
   role: /opt/ansible/roles/Bitd
+  manageStatus: true

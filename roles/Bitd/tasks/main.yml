@@ -1,4 +1,19 @@
 ---
+- name: create pvc
+  k8s:
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: bitcoin
+        namespace: "{{ meta.namespace }}"
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
+
 # tasks file for Bitd
 - name: start bitd
   k8s:
@@ -22,6 +37,13 @@
               image: "docker.io/dymurray/bitcoin-sv-bitd"
               ports:
                 - containerPort: 8332
+              volumeMounts:
+                - name: bitcoin
+                  mountPath: /root/.bitcoin
+            volumes:
+              - name: bitcoin
+                persistentVolumeClaim:
+                  claimName: bitcoin
   register: dep
 
 - name: create service
@@ -50,7 +72,7 @@
     msg: "{{ svc.result.spec.clusterIP }}:{{ svc.result.spec.ports[0].port }}"
 
 - uri:
-    url: http://192.168.42.208:{{svc.result.spec.ports[0].nodePort}}
+    url: http://192.168.42.96:{{svc.result.spec.ports[0].nodePort}}
     method: POST
     user: foobar
     password: foobar

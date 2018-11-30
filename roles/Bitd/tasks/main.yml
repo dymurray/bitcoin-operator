@@ -1,4 +1,9 @@
 ---
+- name: get minikube IP
+  shell: minikube ip
+  register: res
+  when: up_local
+    
 - name: create pvc
   k8s:
     definition:
@@ -70,9 +75,17 @@
 
 - debug:
     msg: "{{ svc.result.spec.clusterIP }}:{{ svc.result.spec.ports[0].port }}"
+- set_fact:
+    ip: "{{ svc.result.spec.clusterIP }}:{{ svc.result.spec.ports[0].port }}"
+  when: up_local == false
+- set_fact:
+    ip: "{{ res.stdout }}:{{svc.result.spec.ports[0].nodePort}}"
+  when: up_local
+- debug:
+    msg: "{{ ip }}"
 
 - uri:
-    url: http://192.168.42.96:{{svc.result.spec.ports[0].nodePort}}
+    url: http://{{ ip }}
     method: POST
     user: foobar
     password: foobar
@@ -82,7 +95,7 @@
   register: chaininfo
 
 - uri:
-    url: http://192.168.42.96:{{svc.result.spec.ports[0].nodePort}}
+    url: http://{{ ip }}
     method: POST
     user: foobar
     password: foobar
@@ -92,7 +105,7 @@
   register: walletinfo
 
 - uri:
-    url: http://192.168.42.96:{{svc.result.spec.ports[0].nodePort}}
+    url: http://{{ ip }}
     method: POST
     user: foobar
     password: foobar
@@ -102,6 +115,12 @@
   register: addressinfo
 - debug:
     msg: "{{ addressinfo.json }}"
+
+- set_fact:
+    synced: false
+- set_fact:
+    synced: true
+  when: chaininfo.json.result.blocks | int == chaininfo.json.result.headers | int
 
 - k8s_status:
     api_version: bitcoin.example.com/v1
@@ -114,3 +133,8 @@
       headers: "{{ chaininfo.json.result.headers | int }}"
       balance: "{{ walletinfo.json.result.balance }}"
       unconfirmedBalance: "{{ walletinfo.json.result.unconfirmed_balance }}"
+      synced: "{{ synced }}"
+
+
+- debug:
+    msg: "{{ synced }}"

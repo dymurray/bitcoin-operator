@@ -22,10 +22,51 @@
               image: "docker.io/dymurray/bitcoin-sv-bitd"
               ports:
                 - containerPort: 8332
+  register: dep
+
+- name: create service
+  k8s:
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: '{{ meta.name }}-bitd'
+        namespace: '{{ meta.namespace }}'
+      spec:
+        type: NodePort
+        selector:
+          app: bitd
+        ports:
+        - protocol: TCP
+          port: 8332
+          targetPort: 8332
+          name: rpc
+  register: svc
+
+- debug:
+    msg: "{{ svc }}"
+
+- debug:
+    msg: "{{ svc.result.spec.clusterIP }}:{{ svc.result.spec.ports[0].port }}"
+
+- uri:
+    url: http://192.168.42.208:{{svc.result.spec.ports[0].nodePort}}
+    method: POST
+    user: foobar
+    password: foobar
+    body: "{{ lookup('file', 'getblockchaininfo.json') }}"
+    force_basic_auth: yes
+    body_format: json
+  register: info
+
+- debug:
+    msg: "{{ info.json.result.blocks }}"
+
 - k8s_status:
     api_version: bitcoin.example.com/v1
     kind: Bitd
     name: "{{ meta.name }}"
     namespace: "{{ meta.namespace }}"
     status:
-      hello: world
+      blockCount: "{{ info.json.result.blocks | int }}"
+      headers: "{{ info.json.result.headers | int }}"

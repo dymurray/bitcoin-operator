@@ -1,2 +1,5 @@
 ---
 # defaults file for Bitd
+meta:
+  name: example-bitd
+  namespace: default

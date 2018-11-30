@@ -79,10 +79,29 @@
     body: "{{ lookup('file', 'getblockchaininfo.json') }}"
     force_basic_auth: yes
     body_format: json
-  register: info
+  register: chaininfo
 
+- uri:
+    url: http://192.168.42.96:{{svc.result.spec.ports[0].nodePort}}
+    method: POST
+    user: foobar
+    password: foobar
+    body: "{{ lookup('file', 'getwalletinfo.json') }}"
+    force_basic_auth: yes
+    body_format: json
+  register: walletinfo
+
+- uri:
+    url: http://192.168.42.96:{{svc.result.spec.ports[0].nodePort}}
+    method: POST
+    user: foobar
+    password: foobar
+    body: "{{ lookup('file', 'getaccountaddress.json') }}"
+    force_basic_auth: yes
+    body_format: json
+  register: addressinfo
 - debug:
-    msg: "{{ info.json.result.blocks }}"
+    msg: "{{ addressinfo.json }}"
 
 - k8s_status:
     api_version: bitcoin.example.com/v1
@@ -90,5 +109,8 @@
     name: "{{ meta.name }}"
     namespace: "{{ meta.namespace }}"
     status:
-      blockCount: "{{ info.json.result.blocks | int }}"
-      headers: "{{ info.json.result.headers | int }}"
+      address: "{{ addressinfo.json.result }}"
+      blockCount: "{{ chaininfo.json.result.blocks | int }}"
+      headers: "{{ chaininfo.json.result.headers | int }}"
+      balance: "{{ walletinfo.json.result.balance }}"
+      unconfirmedBalance: "{{ walletinfo.json.result.unconfirmed_balance }}"

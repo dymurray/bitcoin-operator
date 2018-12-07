@@ -4,3 +4,5 @@ meta:
   name: example-bitd
   namespace: default
 up_local: true
+user: satoshi
+password: nakamoto

@@ -40,6 +40,8 @@
             containers:
             - name: bitd
               image: "docker.io/dymurray/bitcoin-sv-bitd"
+              command: ["/usr/local/bin/bitcoind"]
+              args: ["-server", "-rest", "-listen", "-rpcallowip=0.0.0.0/0", "-prune=600", "-rpcuser={{ user }}", "-rpcpassword={{ password }}"]
               ports:
                 - containerPort: 8332
               volumeMounts:
@@ -87,8 +89,8 @@
 - uri:
     url: http://{{ ip }}
     method: POST
-    user: foobar
-    password: foobar
+    user: "{{ user }}"
+    password: "{{ password }}"
     body: "{{ lookup('file', 'getblockchaininfo.json') }}"
     force_basic_auth: yes
     body_format: json
@@ -97,8 +99,8 @@
 - uri:
     url: http://{{ ip }}
     method: POST
-    user: foobar
-    password: foobar
+    user: "{{ user }}"
+    password: "{{ password }}"
     body: "{{ lookup('file', 'getwalletinfo.json') }}"
     force_basic_auth: yes
     body_format: json
@@ -107,8 +109,8 @@
 - uri:
     url: http://{{ ip }}
     method: POST
-    user: foobar
-    password: foobar
+    user: "{{ user }}"
+    password: "{{ password }}"
     body: "{{ lookup('file', 'getaccountaddress.json') }}"
     force_basic_auth: yes
     body_format: json

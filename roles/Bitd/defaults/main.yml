@@ -6,3 +6,4 @@ meta:
 up_local: true
 user: satoshi
 password: nakamoto
+rpc_secret_name: bitd-creds

@@ -3,6 +3,25 @@
   shell: minikube ip
   register: res
   when: up_local
+
+- name: check if secret exists
+  set_fact:
+    secret_lookup: "{{ lookup('k8s', api_version='v1', kind='Secret', namespace=meta.namespace, resource_name=rpc_secret_name) }}"
+
+- debug:
+    msg: "{{ secret_lookup }}"
+- name: create creds secret if it doesn't exist
+  k8s:
+    definition:
+      kind: Secret
+      apiVersion: v1
+      metadata:
+        name: "{{ rpc_secret_name }}"
+        namespace: "{{ meta.namespace }}"
+      data:
+        user: "{{ user | b64encode }}"
+        password: "{{ password | b64encode }}"
+  when: (secret_lookup|length==0)
     
 - name: create pvc
   k8s:

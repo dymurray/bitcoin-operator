@@ -4,4 +4,4 @@ metadata:
   name: example-bitd
 spec:
   # Add fields here
-  size: 1
+  rpc_secret_name: bitd-rpc-creds

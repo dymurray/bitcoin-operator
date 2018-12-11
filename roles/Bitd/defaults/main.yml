@@ -3,7 +3,8 @@
 meta:
   name: example-bitd
   namespace: default
-up_local: true
+up_local: false
 user: satoshi
 password: nakamoto
-rpc_secret_name: bitd-creds
+rpc_secret_name: bitcoin-rpc-credentials
+pvc_size: 20Gi # Just in case someone wants to test it out. Default CR size is 200Gi

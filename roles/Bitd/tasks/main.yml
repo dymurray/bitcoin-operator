@@ -36,7 +36,7 @@
           - ReadWriteOnce
         resources:
           requests:
-            storage: 20Gi
+            storage: "{{ pvc_size }}"
 
 # tasks file for Bitd
 - name: start bitd

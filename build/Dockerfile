@@ -1,4 +1,4 @@
-FROM docker.io/djzager/ansible-operator:status-flag
+FROM docker.io/dymurray/ansible-operator:status
 
 COPY roles/ ${HOME}/roles/
 COPY watches.yaml ${HOME}/watches.yaml

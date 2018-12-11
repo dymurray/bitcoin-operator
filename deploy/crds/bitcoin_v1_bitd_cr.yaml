@@ -4,4 +4,5 @@ metadata:
   name: example-bitd
 spec:
   # Add fields here
-  rpc_secret_name: bitd-rpc-creds
+  rpc_secret_name: bitcoin-rpc-credentials
+  pvc_size: 200Gi

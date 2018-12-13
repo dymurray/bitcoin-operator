@@ -138,10 +138,7 @@
     msg: "{{ addressinfo.json }}"
 
 - set_fact:
-    synced: false
-- set_fact:
-    synced: true
-  when: chaininfo.json.result.blocks | int == chaininfo.json.result.headers | int
+    synced: "{{ true if chaininfo.json.result.blocks | int == chaininfo.json.result.headers | int else false }}"
 
 - k8s_status:
     api_version: bitcoin.example.com/v1

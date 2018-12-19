@@ -148,10 +148,14 @@
     status:
       address: "{{ addressinfo.json.result }}"
       blockCount: "{{ chaininfo.json.result.blocks | int }}"
+      bestBlockHash: "{{ chaininfo.json.result.bestblockhash }}"
       headers: "{{ chaininfo.json.result.headers | int }}"
       balance: "{{ walletinfo.json.result.balance }}"
       unconfirmedBalance: "{{ walletinfo.json.result.unconfirmed_balance }}"
+      pruned: "{{ chaininfo.json.result.pruned }}"
+      pruneHeigh: "{{ chaininfo.json.result.pruneheight }}"
       synced: "{{ synced }}"
+      verificationProgress: "{{ chaininfo.json.result.verificationprogress }}"
 
 
 - debug:
